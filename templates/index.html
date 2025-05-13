@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='index.css') }}"
+    />
+    <title>To Do List</title>
+  </head>
+  <body>
+    <h1>To Do List</h1>
+    <form action="{{ url_for('home')}}" class="input-container" method="post">
+      <input
+        type="text"
+        placeholder="Enter Task"
+        name="todo_name"
+        id="input-todo"
+        required
+      />
+      <button id="add-todo" type="submit">+</button>
+    </form>
+    <h2>Task To do</h2>
+    <div class="todo-container">
+      {% for item in items if not item.checked %}
+      <div class="todo">
+        <p>{{item.name}}</p>
+        <div class="actions">
+          <form
+            action="{{ url_for('checked_todo', todo_id=item.id )}}"
+            method="post"
+          >
+            <input
+              type="checkbox"
+              {%
+              if
+              item.checked
+              %}checked{%
+              endif%}
+              onchange="this.form.submit()"
+            />
+          </form>
+          <form
+            action="{{ url_for('delete_todo', todo_id=item.id )}}"
+            method="post"
+          >
+            <button>Delete</button>
+          </form>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Finished Tasks -->
+    <h2 class="section-title">Finished Tasks</h2>
+    <div class="task-container done">
+      {% for item in items if item.checked %}
+      <div class="task completed">
+        <form
+          action="{{ url_for('checked_todo', todo_id=item.id) }}"
+          method="post"
+        >
+          <input type="checkbox" onchange="this.form.submit()" checked />
+        </form>
+        <span style="text-decoration: line-through">{{ item.name }}</span>
+        <form
+          action="{{ url_for('delete_todo', todo_id=item.id) }}"
+          method="post"
+        >
+          <button type="submit" class="delete-button">Delete</button>
+        </form>
+      </div>
+      {% endfor %}
+    </div>
+  </body>
+</html>
